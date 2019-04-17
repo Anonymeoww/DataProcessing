@@ -9,97 +9,114 @@ Running this script will generate all central tendency elements and a boxplot.
 """
 
 import pandas as pd
-import statistics as st
 import matplotlib.pyplot as plt
+import numpy as np
 
 INPUT_DATA = 'input.csv'
-#OUTPUT_JSON = ...
+OUTPUT_JSON = 'data.json'
 
 
-def data_cleaning(df):
+def data_cleaning(datafile):
+    """
+    This function selects and cleans the relevant data from the csv file.
+    Subset includes: Country, Region, Pop. Density (per sq. mi.),
+    Infant mortality (per 1000 births) and GDP ($ per capita) dollars.
+    """
 
-    # Remove whitespace
+    # Load data from csv, create subset
+    df = pd.read_csv(datafile)
+    df = df[['Country', 'Region', 'Pop. Density (per sq. mi.)', 'Infant mortality (per 1000 births)',
+             'GDP ($ per capita) dollars']]
+
+    # Remove unwanted whitespace
+    df['Country'] = df['Country'].str.strip()
     df['Region'] = df['Region'].str.strip()
 
-    # Drop all irrelevant columns for this problem
-    cols = [2, 3, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-    df.drop(df.columns[cols], axis=1, inplace=True)
-    # print(df.columns)
-
-    # Find and drop all rows with one or more missing or unknown values
-    numbercols = ['Pop. Density (per sq. mi.)', 'Infant mortality (per 1000 births)', 'GDP ($ per capita) dollars']
-
-    null_data = df[df.isnull().any(axis=1)]
-    df = df.drop([47, 221, 223])
-
-    unknown = (df.loc[df['Pop. Density (per sq. mi.)'] == 'unknown'])
-    # print(unknown)
-    unknown = (df.loc[df['Infant mortality (per 1000 births)'] == 'unknown'])
-    # print(unknown)
-    unknown = (df.loc[df['GDP ($ per capita) dollars'] == 'unknown'])
-    # print(unknown)
-
-    df = df.drop([10, 52, 93, 126, 179, 53, 102, 113, 182])
-
-    # Strip the letters in column
+    # Strip the word 'dollars' in this column
     df['GDP ($ per capita) dollars'] = df['GDP ($ per capita) dollars'].str.strip(" dollars")
 
-    # See all columns when printing dataframe
-    pd.set_option("display.max_columns", None)
+    # Find and replace all unknown values with nan
+    df = df.replace('unknown', np.nan)
 
-    # Change commas into dots
+    # Change commas into dots, change datatype from string to float
     df = df.replace(',', '.', regex=True)
+    df['GDP ($ per capita) dollars'] = df['GDP ($ per capita) dollars'].astype(float)
+    df["Infant mortality (per 1000 births)"] = df["Infant mortality (per 1000 births)"].astype(float)
 
-    # When visually analyzing the data, I found that the data for Surinam was incorrect. I therefore delete this row.
-
-    print(df.at()
-
-    df[numbercols] = df[numbercols].apply(pd.to_numeric)
+    # Visual analysis of data: the GDP for Surinam was incorrect. Value was manually changed to nan.
+    df.at[193, 'GDP ($ per capita) dollars'] = np.nan
 
     return df
 
-
 def central_tendency(df):
+    """
+    Calculates and prints the central tendency for the data about GDP.
+    """
 
-    mean = df['GDP ($ per capita) dollars'].mean()
-    median = df['GDP ($ per capita) dollars'].median()
+    mean = df['GDP ($ per capita) dollars'].mean(skipna=True)
+    median = df['GDP ($ per capita) dollars'].median(skipna=True)
     mode = df['GDP ($ per capita) dollars'].mode()[0]
-    stdev = st.stdev(df['GDP ($ per capita) dollars'])
 
-    print(f"Central Tendency values for the GDP per capita\n"
-          f"Mean:    {mean}\nMedian:  {median}\nMode:    {mode}\nSt.dev.: {stdev}")
+    print(f"\nCentral Tendency values for the GDP per capita")
+    print('Mean:    %.2f' % mean)
+    print('Median:  %i' % median)
+    print('Mode:    %i\n' % mode)
 
+def fn_summary(df):
+    """
+    Calculates and prints the Five Number Summary for the data about infant mortality.
+    """
+
+    quartiles = np.nanpercentile(df["Infant mortality (per 1000 births)"], [25, 50, 75])
+    data_min, data_max = df["Infant mortality (per 1000 births)"].min(skipna=True), \
+                         df["Infant mortality (per 1000 births)"].max(skipna=True)
+
+    print(f"Five number summary for infant mortality")
+    print('Min:    %.2f' % data_min)
+    print('Q1:     %.2f' % quartiles[0])
+    print('Median: %.2f' % quartiles[1])
+    print('Q3:     %.2f' % quartiles[2])
+    print('Max:    %.2f' % data_max)
 
 def create_boxplot(df):
+    """
+    Create boxplot showing the distribution of infant mortality worldwide, and per region.
+    """
 
-    # Create a figure instance
-    fig = plt.figure(1, figsize=(9, 6))
+    df.boxplot(column = ['Infant mortality (per 1000 births)'])
+    plt.title('Distribution of worldwide infant mortality')
+    plt.ylabel('Deaths per 1000 births')
+    plt.show()
 
-    # Create an axes instance
-    ax = fig.add_subplot(111)
-
-    # Create the boxplot
-    bp = ax.boxplot(df['Infant mortality (per 1000 births)'])
-    plt.title('Average infant mortality (per 1000 births)')
-    plt.xlabel('x')
-    plt.ylabel('Number of deaths')
-
+    df.boxplot(column = ['Infant mortality (per 1000 births)'], by = 'Region')
+    plt.title('Distribution of infant mortality per region')
+    plt.xticks(rotation='vertical')
+    plt.suptitle("")
+    plt.ylabel('Deaths per 1000 births')
     plt.show()
 
 def create_histogram(df):
-    df['GDP ($ per capita) dollars'].plot.hist()
+    """
+    Create histogram showing the distribution of infant mortality worldwide.
+    """
 
+    df['GDP ($ per capita) dollars'].plot.hist(bins = 100, grid = True)
+    plt.axis([0, 60000, 0, 28])
+    plt.title('Distribution of GDP per country')
     plt.show()
 
-def write_json():
+def write_json(df):
+    """
+    Writes the cleaned data to a JSON file with a structured orientation.
+    """
 
-    pass
-
+    df = df.set_index("Country").to_json(OUTPUT_JSON, orient='index')
 
 if __name__ == "__main__":
 
-    df = pd.read_csv(INPUT_DATA)
-    df = data_cleaning(df)
+    df = data_cleaning(INPUT_DATA)
     central_tendency(df)
+    fn_summary(df)
     create_boxplot(df)
     create_histogram(df)
+    write_json(df)
