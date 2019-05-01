@@ -20,12 +20,13 @@ This file is meant to show a line chart, plotted from JSON data.
         <h2 style="text-align:center">Violent crime rate development 1997-2016</h2>
         <canvas id="my-chart" width="1050" height="450"></canvas>
     <script>
+        // Load data from JSON
         var fileName = "uscrimedata.json";
         var txtFile = new XMLHttpRequest();
         txtFile.onreadystatechange = function() {
             if (txtFile.readyState === 4 && txtFile.status == 200) {
                 console.log(JSON.parse(txtFile.responseText));
-
+                // Transform coordinates
                 let xScale = createTransform([1997, 2016],[50, 1000.0]);
                 let yScale = createTransform([0, 700],[400, 0]);
 
@@ -33,7 +34,7 @@ This file is meant to show a line chart, plotted from JSON data.
                 const canvas = document.getElementById('my-chart');
                 const ctx = canvas.getContext('2d');
 
-                // Draw axes
+                // Draw axes and y axis values
                 ctx.moveTo(50,0);
                 ctx.lineTo(50,400);
                 ctx.fillText('Year',950,440);
@@ -53,16 +54,10 @@ This file is meant to show a line chart, plotted from JSON data.
                     ctx.lineTo(1050, yaxe);
                 });
 
-                // Draw graph and x-axe values
+                // Draw graph and x axis values
                 ctx.moveTo(50,400);
 
                 data.forEach(function (b) {
-                    console.log("Nieuw punt");
-                    console.log(parseInt(b['Year'], 10));
-                    console.log(xScale(parseInt(b['Year'], 10)));
-                    console.log(parseFloat(b['Violent crime rate'], 10));
-                    console.log(yScale(parseFloat(b['Violent crime rate'], 10)));
-
                     x = xScale(parseInt(b['Year'], 10));
                     y = yScale(parseFloat(b['Violent crime rate'], 10));
                     ctx.lineTo(x,y);
@@ -81,22 +76,22 @@ This file is meant to show a line chart, plotted from JSON data.
         txtFile.open("GET", fileName);
         txtFile.send();
 
+        // Function for transforming coordinates
         function createTransform(domain, range){
             var domain_min = domain[0];
             var domain_max = domain[1];
             var range_min = range[0];
             var range_max = range[1];
 
-            // formulas to calculate the alpha and the beta
+            // Formulas to calculate the alpha and the beta
                 var alpha = (range_max - range_min) / (domain_max - domain_min);
             var beta = range_max - alpha * domain_max;
 
-            // returns the function for the linear transformation (y= a * x + b)
+            // Returns the function for the linear transformation (y= a * x + b)
             return function(x){
               return alpha * x + beta;
             }
         }
-
     </script>
 </body>
 <footer style="text-align: left">JavaScript line chart <br>Made by Dilisha C. Jethoe</footer>
