@@ -28,4 +28,4 @@ def write_json(data, JSON_FILE):
             f.write(json.dumps(data))
 
 if __name__ == "__main__":
-    read_csv(file, json_file)
+    read_csv(INPUT_FILE, JSON_FILE)
