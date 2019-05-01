@@ -10,15 +10,15 @@ This file is meant to show a line chart, plotted from JSON data.
     <meta charset="UTF-8">
     <title>Line chart</title>
 </head>
-<body>
-    <h3>Development of violent crime rate in the US</h3>
+<body style="margin:0 auto; width:1050px;">
+    <h2>Development of violent crime rate in the US</h2>
     <h5>The line chart shows the development of the violent crime rate from 1997 to 2016.<br>
         The data was made available by the
     <a href="https://ucr.fbi.gov/crime-in-the-u.s/2016/crime-in-the-u.s.-2016/topic-pages/tables/table-1">FBI.</a>
     This rate is derived from the amount of violent crimes divided by the population.</h5>
-    <!--<canvas id="my-house" width="300" height="300"></canvas>-->
-    <canvas id="my-chart" width="1050" height="450"></canvas>
 
+        <h2 style="text-align:center">Violent crime rate development 1997-2016</h2>
+        <canvas id="my-chart" width="1050" height="450"></canvas>
     <script>
         var fileName = "uscrimedata.json";
         var txtFile = new XMLHttpRequest();
@@ -34,61 +34,62 @@ This file is meant to show a line chart, plotted from JSON data.
                 const ctx = canvas.getContext('2d');
 
                 // Draw axes
-                //ctx.strokeStyle = 'black';
-                ctx.lineWidth = 5;
                 ctx.moveTo(50,0);
                 ctx.lineTo(50,400);
-                ctx.fillText('Year',950,430)
+                ctx.fillText('Year',950,440);
 
                 ctx.moveTo(50,400);
                 ctx.lineTo(1050,400);
-                ctx.save()
-                ctx.rotate(1.5 * Math.PI)
+                ctx.save();
+                ctx.rotate(1.5 * Math.PI);
                 ctx.fillText('Violent crime rate', -100, 20);
-                ctx.restore()
+                ctx.restore();
 
-                var arrayaxe = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+                var arrayaxe = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
                 arrayaxe.forEach(function(c){
-                    yaxe = yScale(c)
-                    ctx.fillText(c,28,yaxe)
-                    ctx.moveTo(50,yaxe)
-                    //ctx.strokeStyle = 'blue'
-                    //ctx.lineWidth = 0.5
-                    ctx.lineTo(1050, yaxe)
+                    yaxe = yScale(c);
+                    ctx.fillText(c,28,yaxe);
+                    ctx.moveTo(50,yaxe);
+                    ctx.lineTo(1050, yaxe);
                 });
 
                 // Draw graph and x-axe values
-                //ctx.strokeStyle = 'black';
-                ctx.lineWidth = 2;
                 ctx.moveTo(50,400);
 
                 data.forEach(function (b) {
-                    console.log("Nieuw punt")
-                    console.log(parseInt(b['Year'], 10))
-                    console.log(xScale(parseInt(b['Year'], 10)))
-                    console.log(parseFloat(b['Violent crime rate'], 10))
-                    console.log(yScale(parseFloat(b['Violent crime rate'], 10)))
+                    console.log("Nieuw punt");
+                    console.log(parseInt(b['Year'], 10));
+                    console.log(xScale(parseInt(b['Year'], 10)));
+                    console.log(parseFloat(b['Violent crime rate'], 10));
+                    console.log(yScale(parseFloat(b['Violent crime rate'], 10)));
 
-                    x = xScale(parseInt(b['Year'], 10))
-                    y = yScale(parseFloat(b['Violent crime rate'], 10))
-                    ctx.lineTo(x,y)
-                    ctx.fillText(parseInt(b['Year'], 10),x,410)
+                    x = xScale(parseInt(b['Year'], 10));
+                    y = yScale(parseFloat(b['Violent crime rate'], 10));
+                    ctx.lineTo(x,y);
+                    ctx.fillText(parseInt(b['Year'], 10), x+15, 420);
                 });
                     ctx.stroke();
+
+                // Draw ticks on x axis
+                for (x = 1998; x < 2017; x += 1) {
+                    ctx.moveTo(xScale(x), 400);
+                    ctx.lineTo(xScale(x), 405);
+                    ctx.stroke();
+            };
             }
         }
         txtFile.open("GET", fileName);
         txtFile.send();
 
         function createTransform(domain, range){
-            var domain_min = domain[0]
-            var domain_max = domain[1]
-            var range_min = range[0]
-            var range_max = range[1]
+            var domain_min = domain[0];
+            var domain_max = domain[1];
+            var range_min = range[0];
+            var range_max = range[1];
 
             // formulas to calculate the alpha and the beta
-                var alpha = (range_max - range_min) / (domain_max - domain_min)
-            var beta = range_max - alpha * domain_max
+                var alpha = (range_max - range_min) / (domain_max - domain_min);
+            var beta = range_max - alpha * domain_max;
 
             // returns the function for the linear transformation (y= a * x + b)
             return function(x){
