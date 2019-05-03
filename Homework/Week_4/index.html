@@ -1,0 +1,39 @@
+<!--
+Name:             Dilisha C. Jethoe
+Student number:   12523186
+This file is meant to show a bar chart, plotted from JSON data.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript" src="d3/d3.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            d3.select("head").append("title").text("Bar Chart");
+            d3.select("body").append("p")
+                             .text("This bar chart is about the top 100 songs of Spotify in 2018.")
+                             .style("color", "pink")
+                             .style("font-family", "Courier");
+            d3.select("body").append("p").text("This bar chart is made by Dilisha C. Jethoe (12523186)")
+                             .style("font-family", "Courier");
+            var fileName = "top2018.json";
+            var txtFile = new XMLHttpRequest();
+            txtFile.onreadystatechange = function() {
+                if (txtFile.readyState === 4 && txtFile.status == 200) {
+                    console.log(JSON.parse(txtFile.responseText));
+                    var dataset = JSON.parse(txtFile.responseText);
+                    d3.select("body").selectAll("p")
+                                    .data(dataset)
+                                    .enter()
+                                    .append("p")
+                                    .text(function(d) { return d["name"]; });
+                }
+            };
+            txtFile.open("GET", fileName);
+            txtFile.send();
+        </script>
+    </body>
+</html>
