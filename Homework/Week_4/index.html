@@ -9,31 +9,16 @@ This file is meant to show a bar chart, plotted from JSON data.
     <head>
         <meta charset="utf-8">
         <script type="text/javascript" src="d3/d3.js"></script>
+<!--        <script src="test.js"></script>-->
+        <script src="fissa.js"></script>
     </head>
     <body>
-        <script type="text/javascript">
-            d3.select("head").append("title").text("Bar Chart");
-            d3.select("body").append("p")
-                             .text("This bar chart is about the top 100 songs of Spotify in 2018.")
-                             .style("color", "pink")
-                             .style("font-family", "Courier");
-            d3.select("body").append("p").text("This bar chart is made by Dilisha C. Jethoe (12523186)")
-                             .style("font-family", "Courier");
-            var fileName = "top2018.json";
-            var txtFile = new XMLHttpRequest();
-            txtFile.onreadystatechange = function() {
-                if (txtFile.readyState === 4 && txtFile.status == 200) {
-                    console.log(JSON.parse(txtFile.responseText));
-                    var dataset = JSON.parse(txtFile.responseText);
-                    d3.select("body").selectAll("p")
-                                    .data(dataset)
-                                    .enter()
-                                    .append("p")
-                                    .text(function(d) { return d["name"]; });
-                }
-            };
-            txtFile.open("GET", fileName);
-            txtFile.send();
-        </script>
+        <div>
+            <p>This barchart shows the danceability of the <a href="https://www.kaggle.com/nadintamer/top-spotify-tracks-of-2018/version/1">
+                top 100 songs on Spotify in 2018<a/>. Danceability describes how suitable a track is for dancing based on
+                a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity.
+                A value of 0.0 is least danceable and 1.0 is most danceable. </p>
+        </div>
+        <svg width="800" height="400" id="barSVG"></svg>
     </body>
 </html>
