@@ -1,0 +1,23 @@
+html {
+    padding: 15px 50px;
+}
+p, footer {
+    color: hotpink;
+    font-family: Courier;
+}
+
+h3, .d3-tip {
+    font-family: Courier;
+}
+
+footer{
+    text-align: left;
+}
+
+.container{
+    margin-left: 100px;
+}
+
+.bar:hover {
+    fill: deeppink;
+}

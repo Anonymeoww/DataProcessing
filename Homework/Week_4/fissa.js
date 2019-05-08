@@ -1,10 +1,21 @@
 window.onload = function() {
-    d3.select("body").append("p")
-        .text("This bar chart is about the top 100 songs of Spotify in 2018.")
-        .style("color", "pink")
-        .style("font-family", "Courier");
-    d3.select("body").append("p").text("This bar chart is made by Dilisha C. Jethoe (12523186)")
-        .style("font-family", "Courier");
+    d3.select("head").append("title")
+                     .text("Bar Chart Spotify Danceability");
+    d3.select(".container-barchart").append("h3")
+                     .text("Bar Chart: Danceability of the Top Spotify tracks 2018");
+    d3.select(".container-barchart").append("p")
+                     .text("Look at this bar chart. It will tell you about the danceability of Spotify's top 100" +
+                         "tracks of 2018. Appearently, many people are into music that is suitable for dancing. " +
+                         "Luckily, there are still some ballads in there!");
+    d3.select(".container-barchart").append("svg")
+                     .attr("width", 800)
+                     .attr("height", 400)
+                     .attr("id", "barSVG");
+    d3.select(".footer-barchart")
+                     .append("p")
+                     .text("This bar chart is made by Dilisha C. Jethoe (12523186)")
+                     .style("font-family", "Courier");
+
     d3.json("top2018.json").then(function (data) {
 
         //SVG
@@ -22,7 +33,7 @@ window.onload = function() {
             .range([0, h - 50]);
 
         // Define the axes
-        var xAxis = d3.axisBottom(xScale)
+        var xAxis = d3.axisBottom(xScale);
 
         // Text label for the x axis
         svg.append("text")
@@ -47,7 +58,8 @@ window.onload = function() {
         var bars = svg.selectAll("rect")
             .data(data)
             .enter()
-            .append("rect");
+            .append("rect")
+            .attr("class", "bar");
 
         var tip = d3.tip()
             .attr('class', 'd3-tip')
@@ -74,12 +86,12 @@ window.onload = function() {
             .on('mouseover', tip.show)
             .on('mouseout', tip.hide);
 
-
+        // Draw axes
         svg.append("g").attr("transform", "translate(40, " + (h - 50) + ")").call(xAxis);
         svg.append("g").attr("transform", "translate(40, " + (0) + ")").call(yAxis);
         svg.call(tip);
 
         });
 
-    }
+    };
 
