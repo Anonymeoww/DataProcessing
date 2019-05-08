@@ -1,5 +1,4 @@
 window.onload = function() {
-    d3.select("head").append("title").text("Bar Chart");
     d3.select("body").append("p")
         .text("This bar chart is about the top 100 songs of Spotify in 2018.")
         .style("color", "pink")
@@ -7,13 +6,6 @@ window.onload = function() {
     d3.select("body").append("p").text("This bar chart is made by Dilisha C. Jethoe (12523186)")
         .style("font-family", "Courier");
     d3.json("top2018.json").then(function (data) {
-        // d3.select("body").selectAll("p")
-        //     .data(data)
-        //     .enter()
-        //     .append("p")
-        //     .text(function (d) {
-        //         return d["danceability"];
-        //     });
 
         //SVG
         var svg = d3.select("#barSVG");
@@ -22,44 +14,72 @@ window.onload = function() {
 
         // Scale functions
         var xScale = d3.scaleLinear()
-                       .domain([0, 100])
-                       .range([0, w]);
+            .domain([0, 100])
+            .range([0, w - 50]);
 
         var yScale = d3.scaleLinear()
-                     .domain([0, 1])
-                     .range([0, h - 20]);
+            .domain([0, 1])
+            .range([0, h - 50]);
 
-        // Define the axis
+        // Define the axes
         var xAxis = d3.axisBottom(xScale)
-                      .ticks(10)
 
+        // Text label for the x axis
+        svg.append("text")
+            .attr("transform",
+                "translate(" + (w / 2) + " ," +
+                (h - 20) + ")")
+            .style("text-anchor", "middle")
+            .text("Songs");
 
-        var yAxis = d3.axisRight(yScale)
-                      .tickValues([0.5])
+        var yAxis = d3.axisLeft(yScale)
+            .tickValues([0.5]);
 
-        svg.append("g").attr("transform", "translate(0, " + (h-20) + ")").call(xAxis)
-        svg.append("g").call(yAxis)
+        // Text label for the y axis
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0)
+            .attr("x", 0 - (h / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("Danceability");
 
-        console.log(svg.selectAll("rect"))
         var bars = svg.selectAll("rect")
             .data(data)
             .enter()
             .append("rect");
 
+        var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function (d) {
+                return "<strong>Danceability:</strong> <span style='color:black'>" + d['danceability'] + "</span>";
+            });
+
         var ypos = 0;
         bars.attr("x", function (d, i) {
-            return i * 8;
+            return xScale(i) + 40;
         })
             .attr("y", function (d) {
-                var barheight = d['danceability'] * 100
-                ypos = 400 - barheight;
-                return ypos;
+                var barheight = yScale(d['danceability']);
+                ypos = h - barheight;
+                return ypos - 50;
             })
             .attr("width", 8)
             .attr("fill", "pink")
             .attr("stroke", 'black')
             .attr("height", function (d) {
-                return d['danceability'] * 100;
-            });
-    });
-};
+                return yScale(d['danceability'])
+            })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
+
+
+        svg.append("g").attr("transform", "translate(40, " + (h - 50) + ")").call(xAxis);
+        svg.append("g").attr("transform", "translate(40, " + (0) + ")").call(yAxis);
+        svg.call(tip);
+
+        });
+
+    }
+
