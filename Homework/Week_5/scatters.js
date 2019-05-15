@@ -75,8 +75,8 @@ function load_data(response){
 function drawPlot(dataset, t) {
 
     var margin = {top: 20, right: 50, bottom: 100, left: 100},
-    w = 1400 - margin.left - margin.right,
-    h = 600 - margin.top - margin.bottom;
+    w = 1200 - margin.left - margin.right,
+    h = 500 - margin.top - margin.bottom;
 
     // Setup axes
     var xScale = d3.scaleLinear()
@@ -196,16 +196,16 @@ function drawPlot(dataset, t) {
     var thirdLegendText = secondValue.toString() + " - " + max.toString();
 
     var g = svg.append('g');
-    g.append("circle").attr("cx",1100).attr("cy",50).attr("r", 6).style("fill", "#fde0dd");
-    g.append("text").attr("x", 1120).attr("y", 55).text(firstLegendText).style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
+    g.append("circle").attr("cx",w-160).attr("cy",40).attr("r", 6).style("fill", "#fde0dd");
+    g.append("text").attr("x", w-140).attr("y", 45).text(firstLegendText).style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
 
     g = svg.append('g');
-    g.append("circle").attr("cx",1100).attr("cy",70).attr("r", 6).style("fill", "#fa9fb5");
-    g.append("text").attr("x", 1120).attr("y", 75).text(secondLegendText).style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
+    g.append("circle").attr("cx",w-160).attr("cy",60).attr("r", 6).style("fill", "#fa9fb5");
+    g.append("text").attr("x", w-140).attr("y", 65).text(secondLegendText).style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
 
     g = svg.append('g');
-    g.append("circle").attr("cx",1100).attr("cy",90).attr("r", 6).style("fill", "#c51b8a");
-    g.append("text").attr("x", 1120).attr("y", 95).text(thirdLegendText).style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
+    g.append("circle").attr("cx",w-160).attr("cy",80).attr("r", 6).style("fill", "#c51b8a");
+    g.append("text").attr("x", w-140).attr("y", 85).text(thirdLegendText).style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
 
 
 
