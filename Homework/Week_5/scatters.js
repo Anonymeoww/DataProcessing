@@ -148,8 +148,8 @@ function drawPlot(dataset, t) {
                     .style("font-family", "Arial")
                     .text("Legend");
 
-    svg.append("text").attr("x", -250)
-                    .attr("y", -100)
+    svg.append("text").attr("x", -200)
+                    .attr("y", -50)
                     .attr("text-anchor", "middle")
                     .attr('transform', 'rotate(-90)')
                     .style("font-size", "12px")
@@ -167,7 +167,7 @@ function drawPlot(dataset, t) {
                                 if (f["teenPreg"] > 2.0 && f["teenPreg"] < 16.4){ return "#fde0dd"}
                                 if (f["teenPreg"]> 16.4 && f["teenPreg"] < 29.5){ return "#fa9fb5"}
                                 if (f["teenPreg"] > 29.5){ return "#c51b8a" }
-         		})
+         })
                           .on("mouseover", function(d) {
                               tooltip.transition()
                                    .duration(200)
@@ -183,7 +183,10 @@ function drawPlot(dataset, t) {
                           });
 
     var max = getMax(dataset["2012"], "teenPreg");
+    console.log(max);
+
     var min = getMin(dataset["2012"], "teenPreg");
+    console.log(min);
 
     var firstValue = ((max-min)/3+min).toFixed(1);
     var secondValue = ((max-min)/3*2+min).toFixed(1);
@@ -203,6 +206,8 @@ function drawPlot(dataset, t) {
     g = svg.append('g');
     g.append("circle").attr("cx",w-160).attr("cy",80).attr("r", 6).style("fill", "#c51b8a");
     g.append("text").attr("x", w-140).attr("y", 85).text(thirdLegendText).style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
+
+
 
     // Tooltip
     var tip = d3.tip()
