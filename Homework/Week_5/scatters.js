@@ -149,7 +149,7 @@ function drawPlot(dataset, t) {
                     .text("Legend");
 
     svg.append("text").attr("x", -250)
-                    .attr("y", -50)
+                    .attr("y", -100)
                     .attr("text-anchor", "middle")
                     .attr('transform', 'rotate(-90)')
                     .style("font-size", "12px")
