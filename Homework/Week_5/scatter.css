@@ -1,0 +1,12 @@
+html {
+    padding: 15px 50px;
+}
+
+h3, .d3-tip, p {
+    font-family: Courier;
+}
+
+h3, footer, #explain {
+    color: hotpink;
+    font-family: Courier;
+}

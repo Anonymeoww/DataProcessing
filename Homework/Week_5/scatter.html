@@ -2,7 +2,7 @@
 Name:             Dilisha C. Jethoe
 Student number:   12523186
 This file is meant to show a scatter plot, plotted from JSON data.
-The Spotify data comes from Kaggle: https://www.kaggle.com/nadintamer/top-spotify-tracks-of-2018/version/1
+The data comes from https://data.oecd.org/api/sdmx-json-documentation/#d.en.330346
 The D3 tooltip was created by Justin Palmer: https://github.com/Caged/d3-tip
 -->
 <!DOCTYPE html>
@@ -10,11 +10,30 @@ The D3 tooltip was created by Justin Palmer: https://github.com/Caged/d3-tip
 <head>
     <meta charset="UTF-8">
     <title>Scatter Plot</title>
-    <script type="text/javascript" src="scatter.js"></script>
+    <script type="text/javascript" src="scatters.js"></script>
+    <script type="text/javascript" src="givenfunctions.js"></script>
     <script type="text/javascript" src="d3/d3.js"></script>
+    <script type="text/javascript" src="d3-tip.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="scatter.css">
 </head>
 <body>
-
+    <h3>Scatter plot: OECD </h3>
+    <p id="explain">The scatter plot below shows the relation between the percentage of children living in violent areas and the
+        GDP of their respective countries. The colour is specified by the teen pregnancy rate. Hovering over the dots
+        will show the name of the country and the pregnancy rate. The data comes from
+        <a href="https://data.oecd.org/api/sdmx-json-documentation/#d.en.330346">OECD</a>. </p>
+    <p><span><label for="y-axis">Select y-axis</label></span>
+    <select id="y-value">
+        <option value="2012">2012</option>
+        <option value="2013">2013</option>
+        <option value="2014">2014</option>
+        <option value="2015">2015</option>
+    </select>
+    <button id="submityear">submit</button>
+    <div>
+        <svg id="plot" width="1400" height="600"></svg>
+    </div>
 </body>
+<footer>This bar chart is made by Dilisha C. Jethoe (12523186)</footer>
 </html>
