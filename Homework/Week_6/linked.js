@@ -29,7 +29,6 @@ d3v5.json("data.json").then(function(data){
 
   // colors should be uniq for every value.
   // For this purpose we create palette(using min/max series-value)
-  //var onlyValues = data.map(function(obj){ return obj[1]; });
   var minValue = Math.min.apply(null, onlyValues),
         maxValue = Math.max.apply(null, onlyValues);
 
@@ -53,38 +52,36 @@ d3v5.json("data.json").then(function(data){
     })
   });
 
-  // console.log(dataset);
+  console.log(dataset);
 
   var map = new Datamap({
     element: document.getElementById('container'),
     fills: {
     defaultFill: 'pink'
     },
-    data: dataset,
-
+    // data: dataset,
     geographyConfig: {
-
+      highlightBorderWidth: 3,
       popupTemplate: function(geography, dataset) {
-
         return '<div class="hoverinfo">' + geography.properties.name + "<br> Total revenue: " + dataset.Total
       },
-      highlightBorderWidth: 3
     }
   });
 
-  d3.select(".container-barchart").append("svg")
+  d3v5.select(".container-barchart").append("svg")
                      .attr("width", 600)
                      .attr("height", 400)
                      .attr("id", "barSVG");
-  d3.select(".footer-barchart")
+  d3v5.select(".footer-barchart")
                    .append("p")
                    .text("This bar chart is made by Dilisha C. Jethoe (12523186)")
                    .style("font-family", "Courier");
 
-  d3.json("top2018.json").then(function (data) {
+  d3v5.json("top2018.json").then(function (data) {
 
       //SVG
       var svg = d3.select("#barSVG");
       var h = svg.attr('height');
       var w = svg.attr('width');
+  })
 });
