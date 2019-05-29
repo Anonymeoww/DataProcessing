@@ -7,6 +7,8 @@ d3v5.json("data.json").then(function(all_data){
 });
 
 function format_data(data) {
+
+    // add all information for available countries
     EUcountries = ['AUT', 'BEL', 'BG', 'BGR', 'HR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN',
         'IRL', 'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'RUS', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE', 'GBR'];
 
@@ -17,7 +19,9 @@ function format_data(data) {
     Othercountries = ['AFG', 'ARM', 'AZE', 'BHR', 'BGD', 'BTN', 'BRN', 'KHM', 'CHN', 'CXR', 'CCK', 'IOT', 'GEO', 'HKG',
         'IND', 'IDN', 'IRN', 'IRQ', 'ISR', 'JOR', 'KAZ', 'KWT', 'KGZ', 'LAO', 'LBN', 'MAC', 'MYS', 'MDV', 'MNG', 'MMR',
         'NPL', 'PRK', 'OMN', 'PAK', 'PSE', 'PHL', 'QAT', 'SAU', 'SGP', 'KOR', 'LKA', 'SYR', 'TWN', 'TJK', 'THA', 'TUR',
-        'TKM', 'ARE', 'UZB', 'VNM', 'YEM'];
+        'TKM', 'ARE', 'UZB', 'VNM', 'YEM', 'ASM', 'AUS', 'NZL', 'COK', 'TLS', 'FSM', 'FJI', 'PYF', 'GUM', 'KIR', 'MNP',
+        'MHL', 'UMI', 'NRU', 'NCL', 'NZL', 'NIU', 'NFK', 'PLW', 'PNG', 'MNP', 'WSM', 'SLB', 'TKL', 'TON', 'TUV', 'VUT',
+        'UMI', 'WLF'];
 
     var country_dict = {};
 
@@ -47,8 +51,7 @@ function format_data(data) {
         Genres: data["JPN"]["Genres"]
     };
 
-    // create color palette function
-    // color can be whatever you wish
+    // create color palette function and add color to dict
     var paletteScale = function (color) {
         if (color > 0 && color < 4000) {
             return "#FEA9BD"
@@ -62,7 +65,6 @@ function format_data(data) {
     };
 
     Object.keys(country_dict).forEach(function (a) {
-        //console.log(country_dict[a].Total);
         country_dict[a]["fillColor"] = paletteScale(country_dict[a].Total)
     });
     console.log(country_dict);
@@ -71,6 +73,7 @@ function format_data(data) {
 
 function create_map(map_data) {
 
+    // create the world map
     var map = new Datamap({
         element: document.getElementById('container'),
         fills: {
@@ -80,31 +83,53 @@ function create_map(map_data) {
         geographyConfig: {
             highlightBorderWidth: 3,
             popupTemplate: function (geography, dataset) {
+                // on hover: show country name and total revenue
                 return ["<div class='hoverinfo'>", geography.properties.name, "</br> Total revenue: ", dataset.Total, "</div>"].join('');
             },
         },
         done: function(map) {
+            // on click: create corresponding bar chart
             map.svg.selectAll('.datamaps-subunit').on('click', function (geography) {
-                console.log(geography.id);
                 d3v5.selectAll("#barSVG").remove();
                 create_bars(map_data, geography.id);
             });
         }
     });
 
+    var svg = d3v5.select(".datamap");
+    var colors = ["#FEA9BD", "#FE7F9C", "#B95D72"];
+    var legend_text = ["Sales < 4 million units", "Sales 5 - 8 million units", "Sales > 8 million units"];
+    var w = 500;
+    var loop_y = 200;
+
+    for (i = 0; i < colors.length; i++) {
+        svg.append("circle")
+          .attr("cx", 10)
+          .attr("cy", loop_y)
+          .attr("r", 5)
+          .style("fill", colors[i]);
+
+        svg.append("text")
+          .attr("x", 15)
+          .attr("y", loop_y + 5)
+          .text(legend_text[i])
+          .attr("font-family", "Courier")
+          .style("font-size", "8px")
+          .attr("alignment-baseline","middle");
+
+          loop_y = loop_y + 30;
+    };
 }
 
 function create_bars(map_data, country_id) {
 
     var get_genres = map_data[country_id]["Genres"];
-
     var genres = Object.values(get_genres);
-    console.log(genres)
 
     d3v5.select(".container-barchart").append("svg")
-        .attr("width", 600)
-        .attr("height", 300)
-        .attr("id", "barSVG");
+                                      .attr("width", 600)
+                                      .attr("height", 300)
+                                      .attr("id", "barSVG");
 
     //SVG
     var svg = d3v5.select("#barSVG");
@@ -114,16 +139,15 @@ function create_bars(map_data, country_id) {
     var genrelist = Object.keys(get_genres);
 
     var xScale = d3v5.scaleBand()
-                    .domain(genrelist)
-                    .range([60, w ]);
+                     .domain(genrelist)
+                     .range([60, w ]);
 
     var yScale = d3v5.scaleLinear()
-        .domain([1500, 0])
-        .range([0, h - 100]);
+                     .domain([1500, 0])
+                     .range([50, h - 50]);
 
     // Define the axes
     var xAxis = d3v5.axisBottom(xScale);
-        //.text("Hallo");
 
     // Text label for barchart
     svg.append("text")
@@ -131,15 +155,9 @@ function create_bars(map_data, country_id) {
             "translate(" + (w / 2+ 50) + " ," +
             (25) + ")")
         .style("text-anchor", "middle")
-        .text('Revenue per category for '+ country_id);
-
-    // // Text label for the x axis
-    // svg.append("text")
-    //     .attr("transform",
-    //         "translate(" + (w / 2) + " ," +
-    //         (h - 20) + ")")
-    //     .style("text-anchor", "middle")
-    //     .text("Categories");
+        .attr("font-family", "Courier")
+        .style("font-size", "20px")
+        .text('Revenue per genre for '+ country_id);
 
     var yAxis = d3v5.axisLeft(yScale);
 
@@ -150,19 +168,21 @@ function create_bars(map_data, country_id) {
         .attr("x", 0 - (h / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Revenue");
+        .attr("font-family", "Courier")
+        .style("font-size", "12px")
+        .text("Revenue in millions of sales");
 
     var bars = svg.selectAll("rect")
-        .data(genrelist)
-        .enter()
-        .append("rect")
-        .attr("class", "bar");
+                  .data(genrelist)
+                  .enter()
+                  .append("rect")
+                  .attr("class", "bar");
 
     var ypos = 0;
     bars.attr("x", function (d, i) {
         return xScale(d);
     })
-        .attr("y", function (d, i) {
+        .attr("height", function (d, i) {
             var barheight = yScale(get_genres[d]);
             ypos = h - barheight;
             return ypos - 50;
@@ -170,15 +190,12 @@ function create_bars(map_data, country_id) {
         .attr("width", xScale.bandwidth())
         .attr("fill", "pink")
         .attr("stroke", 'black')
-        .attr("height", function (d) {
-            console.log(d);
-            console.log(get_genres[d]);
-            console.log(yScale(get_genres[d]));
+        .attr("y", function (d) {
             return yScale(get_genres[d])
         });
 
     // Draw axes
     svg.append("g").attr("transform", "translate(0, " + (h - 50) + ")").call(xAxis);
-    svg.append("g").attr("transform", "translate(60, " + (50) + ")").call(yAxis);
+    svg.append("g").attr("transform", "translate(60, " + (0) + ")").call(yAxis.ticks(4));
 
 }
