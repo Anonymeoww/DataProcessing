@@ -1,5 +1,4 @@
 d3v5.json("data.json").then(function(all_data){
-    console.log(all_data);
 
     var map_data = format_data(all_data);
     create_map(map_data);
@@ -67,7 +66,6 @@ function format_data(data) {
     Object.keys(country_dict).forEach(function (a) {
         country_dict[a]["fillColor"] = paletteScale(country_dict[a].Total)
     });
-    console.log(country_dict);
     return country_dict
 }
 
@@ -118,7 +116,7 @@ function create_map(map_data) {
           .attr("alignment-baseline","middle");
 
           loop_y = loop_y + 30;
-    };
+    }
 }
 
 function create_bars(map_data, country_id) {
@@ -197,5 +195,4 @@ function create_bars(map_data, country_id) {
     // Draw axes
     svg.append("g").attr("transform", "translate(0, " + (h - 50) + ")").call(xAxis);
     svg.append("g").attr("transform", "translate(60, " + (0) + ")").call(yAxis.ticks(4));
-
 }
